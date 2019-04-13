@@ -75,6 +75,8 @@ mapped function modifyTargetWithSourceData targetObj sourceData =
         targetHairMod.HairCount = __calculateTargetHairCount targetObj sourceData.fHairCountPerArea
         targetHairMod.HairRootThickness = sourceData.fRootThickness * propertyScaling
         targetHairMod.HairTipThickness = sourceData.fTipThickness * propertyScaling
+        targetHairMod.HairSegments = sourceData.fHairSegments
+        targetHairMod.HairPasses = sourceData.fHairPasses
         __modifyTargetGuideSplineLengths targetObj sourceData
     )
 )

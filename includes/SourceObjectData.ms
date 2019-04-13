@@ -3,7 +3,9 @@ struct SourceObjectData
     fMinLength,
     fMaxLength,
     fAvgDimension,
+    fHairCountPerArea,
     fRootThickness,
     fTipThickness,
-    fHairCountPerArea
+    fHairSegments,
+    fHairPasses
 )

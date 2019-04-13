@@ -53,6 +53,8 @@ function buildSourceObjectData sourceObj =
     __populateAverageDimension sourceData sourceObj
     sourceData.fRootThickness = sourceHairMod.HairRootThickness
     sourceData.fTipThickness = sourceHairMod.HairTipThickness
+    sourceData.fHairSegments = sourceHairMod.HairSegments
+    sourceData.fHairPasses = sourceHairMod.HairPasses
 
     sourceData -- return
 )
