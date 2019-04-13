@@ -1,24 +1,26 @@
 filein "SharedMethods.ms"
-filein "globals.ms"
+filein "definitions.ms"
 
 mapped function buildHairAndFurObjectAttributes obj =
 (
     local att = attributes HairAndFurObject_Attributes
     (
+        local DEF = HFCDefinitions()
+
         rollout HairAndFurObjectRollout "Hair & Fur Object"
         (
-            spinner ui_spinnerFurGroup "Fur Group" range:[0, 999999, DEFAULT_FUR_GROUP] type:#integer align:#left
+            spinner ui_spinnerFurGroup "Fur Group" range:[DEF.MIN_FUR_GROUP, DEF.MAX_FUR_GROUP, DEF.DEFAULT_FUR_GROUP] type:#integer align:#left
             button ui_buttonRemove "Remove" align:#center
 
             on ui_spinnerFurGroup changed val do
             (
-                setAppData $ APPDATA_INDEX_FUR_GROUP (val as string)
+                setAppData $ DEF.APPDATA_INDEX_FUR_GROUP (val as string)
             )
 
             on ui_buttonRemove pressed do
             (
-                deleteAppData $ APPDATA_INDEX_FUR
-                deleteAppData $ APPDATA_INDEX_FUR_GROUP
+                deleteAppData $ DEF.APPDATA_INDEX_FUR
+                deleteAppData $ DEF.APPDATA_INDEX_FUR_GROUP
                 removeAttributeFromObject $ "HairAndFurObject_Attributes"
             )
         )
@@ -28,14 +30,18 @@ mapped function buildHairAndFurObjectAttributes obj =
 
 mapped function onCreateHairAndFurTargetObject obj =
 (
+    local DEF = HFCDefinitions()
+
     -- setup marker so that the controller can find this
-    setAppData obj APPDATA_INDEX_FUR APPDATA_VALUE_FUR_TARGET
-    setAppData obj APPDATA_INDEX_FUR_GROUP (DEFAULT_FUR_GROUP as string)
+    setAppData obj DEF.APPDATA_INDEX_FUR DEF.APPDATA_VALUE_FUR_TARGET
+    setAppData obj DEF.APPDATA_INDEX_FUR_GROUP (DEF.DEFAULT_FUR_GROUP as string)
 )
 
 mapped function onCreateHairAndFurSourceObject obj =
 (
+    local DEF = HFCDefinitions()
+
     -- setup marker so that the controller can find this
-    setAppData obj APPDATA_INDEX_FUR APPDATA_VALUE_FUR_SOURCE
-    setAppData obj APPDATA_INDEX_FUR_GROUP (DEFAULT_FUR_GROUP as string)
+    setAppData obj DEF.APPDATA_INDEX_FUR DEF.APPDATA_VALUE_FUR_SOURCE
+    setAppData obj DEF.APPDATA_INDEX_FUR_GROUP (DEF.DEFAULT_FUR_GROUP as string)
 )
