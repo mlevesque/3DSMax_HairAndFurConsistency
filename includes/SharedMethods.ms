@@ -121,4 +121,20 @@
     for a in faceAreas do surfaceArea += a
     surfaceArea -- return
  )
- 
+
+ /**
+    Returns the length of the spline at the given index of the given shape object.
+
+    @param splineObject
+        The spline object that contains the spline we want to get the length from.
+    @param splineIndex
+        The index of the spline within the given spline object that we want the length from.
+
+    @return
+        The length of the spline.
+  */
+ function getSplineLength splineObject splineIndex =
+ (
+    local lengths = getSegLengths splineObject splineIndex
+    lengths[lengths.count]
+ )
