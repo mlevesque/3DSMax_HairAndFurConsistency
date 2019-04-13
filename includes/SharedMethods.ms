@@ -138,3 +138,18 @@
     local lengths = getSegLengths splineObject splineIndex
     lengths[lengths.count]
  )
+
+ /**
+    Returns the averaged dimensions of the given scene object.
+
+    @param obj
+        The scene object to get the average dimension from.
+
+    @return The average dimension value of the given object.
+  */
+ function calculateAverageDimension obj =
+ (
+    local dimensions = obj.max - obj.min
+    (dimensions.x + dimensions.y + dimensions.z) / 3
+ )
+ 

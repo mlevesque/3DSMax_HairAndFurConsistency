@@ -34,6 +34,15 @@ function __populateHairCountPerArea sourceData sourceObj sourceHairMod =
     sourceData.fHairCountPerArea = sourceHairMod.HairCount / calculateSurfaceArea sourceObj
 )
 
+function __populateAverageDimension sourceData sourceObj =
+(
+    --first disable hair and fur because we don't want it to contribute to the dimensions
+    local sourceHairMod = getHairAndFurModFromObject sourceObj
+    sourceHairMod.enabled = false
+    sourceData.fAvgDimension = calculateAverageDimension sourceObj
+    sourceHairMod.enabled = true
+)
+
 function buildSourceObjectData sourceObj =
 (
     local sourceData = SourceObjectData()
@@ -41,6 +50,9 @@ function buildSourceObjectData sourceObj =
     local sourceHairMod = getHairAndFurModFromObject sourceObj
     __populateHairLengths sourceData sourceObj sourceHairMod
     __populateHairCountPerArea sourceData sourceObj sourceHairMod
+    __populateAverageDimension sourceData sourceObj
+    sourceData.fRootThickness = sourceHairMod.HairRootThickness
+    sourceData.fTipThickness = sourceHairMod.HairTipThickness
 
     sourceData -- return
 )

@@ -20,11 +20,11 @@ function __calculateGuideSplineLengthScale shapeObj splineIndex sourceMinLength 
     random scaleRange.x scaleRange.y
 )
 
-function __modifyTargetGuideSplineLengths targetObject sourceData =
+function __modifyTargetGuideSplineLengths targetObj sourceData =
 (
     -- create spline shape of hair guides
-    local targetHairMod = getHairAndFurModFromObject targetObject
-    local targetShape = targetHairMod.ConvertGuidesToSplines instance:targetObject
+    local targetHairMod = getHairAndFurModFromObject targetObj
+    local targetShape = targetHairMod.ConvertGuidesToSplines instance:targetObj
     for splineIndex = 1 to numSplines targetShape do
     (
         -- build transformation matrix to scale down spline so that length falls within range of our source data
@@ -45,18 +45,36 @@ function __modifyTargetGuideSplineLengths targetObject sourceData =
     delete targetShape
 )
 
-function __calculateTargetHairCount targetObject hairCountPerArea =
+function __calculateTargetHairCount targetObj hairCountPerArea =
 (
-    local targetSurfaceArea = calculateSurfaceArea targetObject
+    local targetSurfaceArea = calculateSurfaceArea targetObj
     ceil (targetSurfaceArea * hairCountPerArea)
 )
 
-mapped function modifyTargetWithSourceData targetObject sourceData =
+function __calculateHairPropertyScaling targetObj targetHairMod sourceAvgDimension =
 (
-    local targetHairMod = getHairAndFurModFromObject targetObject
+    -- temporarily disable hair when calculating dimensions so hair isn't included
+    targetHairMod.enabled = false
+    local targetAvgDimension = calculateAverageDimension targetObj
+    targetHairMod.enabled = true
+
+    -- if our source dimension is larger than our target, then we need to swap them
+    --  in order for our scaling to be correct
+    local a = sourceAvgDimension
+    local b = targetAvgDimension
+    if a > b then swap a b
+    a / b -- return
+)
+
+mapped function modifyTargetWithSourceData targetObj sourceData =
+(
+    local targetHairMod = getHairAndFurModFromObject targetObj
     if targetHairMod != undefined then
     (
-        targetHairMod.HairCount = __calculateTargetHairCount targetObject sourceData.fHairCountPerArea
-        __modifyTargetGuideSplineLengths targetObject sourceData
+        local propertyScaling = __calculateHairPropertyScaling targetObj targetHairMod sourceData.fAvgDimension
+        targetHairMod.HairCount = __calculateTargetHairCount targetObj sourceData.fHairCountPerArea
+        targetHairMod.HairRootThickness = sourceData.fRootThickness * propertyScaling
+        targetHairMod.HairTipThickness = sourceData.fTipThickness * propertyScaling
+        __modifyTargetGuideSplineLengths targetObj sourceData
     )
 )
