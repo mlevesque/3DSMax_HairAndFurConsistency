@@ -26,9 +26,16 @@ mapped function buildHairAndFurObjectAttributes obj =
     replaceAttributeInObject obj att
 )
 
-mapped function onCreateHairAndFurObject obj =
+mapped function onCreateHairAndFurTargetObject obj =
 (
     -- setup marker so that the controller can find this
-    setAppData obj APPDATA_INDEX_FUR APPDATA_VALUE_FUR
+    setAppData obj APPDATA_INDEX_FUR APPDATA_VALUE_FUR_TARGET
+    setAppData obj APPDATA_INDEX_FUR_GROUP (DEFAULT_FUR_GROUP as string)
+)
+
+mapped function onCreateHairAndFurSourceObject obj =
+(
+    -- setup marker so that the controller can find this
+    setAppData obj APPDATA_INDEX_FUR APPDATA_VALUE_FUR_SOURCE
     setAppData obj APPDATA_INDEX_FUR_GROUP (DEFAULT_FUR_GROUP as string)
 )

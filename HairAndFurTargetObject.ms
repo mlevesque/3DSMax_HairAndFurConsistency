@@ -4,5 +4,5 @@ filein "includes/HairAndFurObjectAttributesCreator.ms"
 -- (objects must have an Attribute Holder to accept the attributes)
 buildHairAndFurObjectAttributes (selection as array)
 
--- initializes the Hair and Fur Object
-onCreateHairAndFurObject (selection as array)
+-- initializes the Hair and Fur Object as a Target Object
+onCreateHairAndFurTargetObject (selection as array)
