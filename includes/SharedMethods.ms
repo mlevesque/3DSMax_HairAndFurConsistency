@@ -83,3 +83,42 @@
      CustAttributes.add modObj attributeObj
  )
  
+ /**
+    Returns the fist found Hair and Fur modifier on the given scene object.
+
+    @param obj
+        The scene object to get the Hair and Fur modifier from.
+
+    @return
+        The Hair and Fur modifier found on the given object. If none was found, then returns undefined.
+  */
+ function getHairAndFurModFromObject obj =
+ (
+     local furMods = for modObj in obj.modifiers where classof modObj == HairMod collect modObj
+     if furMods.count > 0 then
+    (
+        furMods[1] -- return
+    )
+    else
+    (
+        undefined -- return
+    )
+ )
+
+ /**
+    Calculates the surface area of the given object.
+
+    @param obj
+        The scene object to get the surface area from.
+
+    @return
+        The surface area.
+  */
+ function calculateSurfaceArea obj =
+ (
+    local faceAreas = for i = 1 to polyop.getNumFaces obj collect polyop.getFaceArea obj i
+    local surfaceArea = 0
+    for a in faceAreas do surfaceArea += a
+    surfaceArea -- return
+ )
+ 
