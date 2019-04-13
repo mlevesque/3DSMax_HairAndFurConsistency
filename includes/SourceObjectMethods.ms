@@ -51,10 +51,35 @@ function buildSourceObjectData sourceObj =
     __populateHairLengths sourceData sourceObj sourceHairMod
     __populateHairCountPerArea sourceData sourceObj sourceHairMod
     __populateAverageDimension sourceData sourceObj
-    sourceData.fRootThickness = sourceHairMod.HairRootThickness
-    sourceData.fTipThickness = sourceHairMod.HairTipThickness
+    
+    sourceData.p2Thickness = [sourceHairMod.HairRootThickness,sourceHairMod.HairTipThickness]
     sourceData.fHairSegments = sourceHairMod.HairSegments
     sourceData.fHairPasses = sourceHairMod.HairPasses
+    sourceData.fFlyawayPercentage = sourceHairMod.FlyawayPerc
+    sourceData.fFlyawayStrength = sourceHairMod.FlyawayStren
+    sourceData.fMessStrength = sourceHairMod.MessStren
+    sourceData.iClumps = sourceHairMod.Clumps
+    sourceData.fClumpsStren = sourceHairMod.ClumpsStren
+    sourceData.fClumpsScruff = sourceHairMod.ClumpsScruff
+    sourceData.fClumpsRot = sourceHairMod.ClumpsRot
+    sourceData.fClumpsOffset = sourceHairMod.ClumpsOffset
+    sourceData.fClumpsColors = sourceHairMod.ClumpsColors
+    sourceData.fClumpsRand = sourceHairMod.ClumpsRand
+    sourceData.fClumpsFlat = sourceHairMod.ClumpsFlat
+    sourceData.p2Frizz = [sourceHairMod.FrizzRoot,sourceHairMod.FrizzTip]
+    sourceData.p3FrizzFreq = [sourceHairMod.FrizzFreqX,sourceHairMod.FrizzFreqY,sourceHairMod.FrizzFreqZ]
+    sourceData.p2Kink = [sourceHairMod.KinkRoot,sourceHairMod.KinkTip]
+    sourceData.p3KinkFreq = [sourceHairMod.KinkFreqX,sourceHairMod.KinkFreqY,sourceHairMod.KinkFreqZ]
+    sourceData.iMultiStrandCount = sourceHairMod.MultiStrandCount
+    sourceData.p2MultiStrandSplay = [sourceHairMod.MultiStrandRootSplay,sourceHairMod.MultiStrandTipSplay]
+    sourceData.fMultiRandomize = sourceHairMod.MultiRandomize
+    sourceData.fMultiStrandTwist = sourceHairMod.MultiStrandTwist
+    sourceData.fMultiStrandOffset = sourceHairMod.MultiStrandOffset
+    sourceData.fMultiStrandAspect = sourceHairMod.MultiStrandAspect
+    sourceData.fDynamicsStiffness = sourceHairMod.DynamicsStiffness
+    sourceData.fDynamicsRootHold = sourceHairMod.DynamicsRootHold
+    sourceData.fDynamicsDampen = sourceHairMod.DynamicsDampen
+    sourceData.fDynamicsGravity = sourceHairMod.DynamicsGravity
 
     sourceData -- return
 )

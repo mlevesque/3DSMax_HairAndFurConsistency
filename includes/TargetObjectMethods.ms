@@ -73,10 +73,44 @@ mapped function modifyTargetWithSourceData targetObj sourceData =
     (
         local propertyScaling = __calculateHairPropertyScaling targetObj targetHairMod sourceData.fAvgDimension
         targetHairMod.HairCount = __calculateTargetHairCount targetObj sourceData.fHairCountPerArea
-        targetHairMod.HairRootThickness = sourceData.fRootThickness * propertyScaling
-        targetHairMod.HairTipThickness = sourceData.fTipThickness * propertyScaling
+
+        targetHairMod.HairRootThickness = sourceData.p2Thickness.x * propertyScaling
+        targetHairMod.HairTipThickness = sourceData.p2Thickness.y * propertyScaling
         targetHairMod.HairSegments = sourceData.fHairSegments
         targetHairMod.HairPasses = sourceData.fHairPasses
+        targetHairMod.FlyawayPerc = sourceData.fFlyawayPercentage
+        targetHairMod.FlyawayStren = sourceData.fFlyawayStrength
+        targetHairMod.MessStren = sourceData.fMessStrength
+        targetHairMod.Clumps = sourceData.iClumps
+        targetHairMod.ClumpsStren = sourceData.fClumpsStren
+        targetHairMod.ClumpsScruff = sourceData.fClumpsScruff
+        targetHairMod.ClumpsRot = sourceData.fClumpsRot
+        targetHairMod.ClumpsOffset = sourceData.fClumpsOffset
+        targetHairMod.ClumpsColors = sourceData.fClumpsColors
+        targetHairMod.ClumpsRand = sourceData.fClumpsRand
+        targetHairMod.ClumpsFlat = sourceData.fClumpsFlat
+        targetHairMod.FrizzRoot = sourceData.p2Frizz.x
+        targetHairMod.FrizzTip = sourceData.p2Frizz.y
+        targetHairMod.FrizzFreqX = sourceData.p3FrizzFreq.x
+        targetHairMod.FrizzFreqY = sourceData.p3FrizzFreq.y
+        targetHairMod.FrizzFreqZ = sourceData.p3FrizzFreq.z
+        targetHairMod.KinkRoot = sourceData.p2Kink.x
+        targetHairMod.KinkTip = sourceData.p2Kink.y
+        targetHairMod.KinkFreqX = sourceData.p3KinkFreq.x
+        targetHairMod.KinkFreqY = sourceData.p3KinkFreq.y
+        targetHairMod.KinkFreqZ = sourceData.p3KinkFreq.z
+        targetHairMod.MultiStrandCount = sourceData.iMultiStrandCount
+        targetHairMod.MultiStrandRootSplay = sourceData.p2MultiStrandSplay.x
+        targetHairMod.MultiStrandTipSplay = sourceData.p2MultiStrandSplay.y
+        targetHairMod.MultiRandomize = sourceData.fMultiRandomize
+        targetHairMod.MultiStrandTwist = sourceData.fMultiStrandTwist
+        targetHairMod.MultiStrandOffset = sourceData.fMultiStrandOffset
+        targetHairMod.MultiStrandAspect = sourceData.fMultiStrandAspect
+        targetHairMod.DynamicsStiffness = sourceData.fDynamicsStiffness
+        targetHairMod.DynamicsRootHold = sourceData.fDynamicsRootHold
+        targetHairMod.DynamicsDampen = sourceData.fDynamicsDampen
+        targetHairMod.DynamicsGravity = sourceData.fDynamicsGravity
+
         __modifyTargetGuideSplineLengths targetObj sourceData
     )
 )
