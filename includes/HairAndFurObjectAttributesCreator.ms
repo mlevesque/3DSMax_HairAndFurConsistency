@@ -9,6 +9,7 @@ mapped function buildHairAndFurObjectAttributes obj =
 
         rollout HairAndFurObjectRollout "Hair & Fur Object"
         (
+            label lblType ""
             spinner ui_spinnerFurGroup "Fur Group" range:[DEF.MIN_FUR_GROUP, DEF.MAX_FUR_GROUP, DEF.DEFAULT_FUR_GROUP] type:#integer align:#left
             button ui_buttonRemove "Remove" align:#center
 
@@ -22,6 +23,12 @@ mapped function buildHairAndFurObjectAttributes obj =
                 deleteAppData $ DEF.APPDATA_INDEX_FUR
                 deleteAppData $ DEF.APPDATA_INDEX_FUR_GROUP
                 removeAttributeFromObject $ "HairAndFurObject_Attributes"
+            )
+
+            on HairAndFurObjectRollout open do
+            (
+                local type = getAppData $ DEF.APPDATA_INDEX_FUR
+                if type != undefined then lblType.text = type else lblType.text = ""
             )
         )
     )
