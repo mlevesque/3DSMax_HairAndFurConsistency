@@ -13,9 +13,15 @@ function __getGuideRootPosition shapeObj splineIndex =
     getKnotPoint shapeObj splineIndex 1
 )
 
-function __calculateGuideSplineLengthScale shapeObj splineIndex sourceMinLength sourceMaxLength =
+function __calculateGuideSplineLengthScale targetShape sourceMinLength sourceMaxLength =
 (
-    local targetLength = getSplineLength shapeObj splineIndex
+    local targetLength = 0
+    for splineIndex = 1 to numSplines targetShape do
+    (
+        local l = getSplineLength targetShape splineIndex
+        if l > targetLength then targetLength = l
+    )
+    if targetLength == 0 then targetLength = 1
     local scaleRange = Point2 (sourceMinLength / targetLength) (sourceMaxLength / targetLength)
     random scaleRange.x scaleRange.y
 )
@@ -25,11 +31,11 @@ function __modifyTargetGuideSplineLengths targetObj sourceData =
     -- create spline shape of hair guides
     local targetHairMod = getHairAndFurModFromObject targetObj
     local targetShape = targetHairMod.ConvertGuidesToSplines instance:targetObj
+    local scaleValue = __calculateGuideSplineLengthScale targetShape sourceData.fMinLength sourceData.fMaxLength
     for splineIndex = 1 to numSplines targetShape do
     (
         -- build transformation matrix to scale down spline so that length falls within range of our source data
         local rootPos = __getGuideRootPosition targetShape splineIndex
-        local scaleValue = __calculateGuideSplineLengthScale targetShape splineIndex sourceData.fMinLength sourceData.fMaxLength
         local trans = __constructGuideSplineMatrix rootPos scaleValue
 
         -- use the transform on each knot
