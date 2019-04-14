@@ -1,18 +1,5 @@
-filein "includes/SourceObjectMethods.ms"
-filein "includes/TargetObjectMethods.ms"
+filein "includes/HairAndFurControllerAttributesCreator.ms"
 
-(
-    local test = transMatrix [1,2,3]
-    print test
-
-    local sourceObj = getNodeByName "source" exact:true
-    local targetObj = getNodeByName "target" exact:true
-    local sourceData = buildSourceObjectData sourceObj
-    print "MLEVESQUE ======================="
-    print sourceObj
-    print targetObj
-    print sourceHairInstance
-    print sourceData
-    print "+++++++++++++++++++++++++++++++++"
-    modifyTargetWithSourceData targetObj sourceData
-)
+-- add or replace the Hair And Fur Controller attributes to selected objects
+-- (objects must have an Attribute Holder to accept the attributes)
+buildHairAndFurControllerAttributes (selection as array)
