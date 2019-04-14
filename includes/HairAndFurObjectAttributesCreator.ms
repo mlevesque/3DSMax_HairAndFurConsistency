@@ -29,6 +29,9 @@ mapped function buildHairAndFurObjectAttributes obj =
             (
                 local type = getAppData $ DEF.APPDATA_INDEX_FUR
                 if type != undefined then lblType.text = type else lblType.text = ""
+                local furGroup = getAppData $ DEF.APPDATA_INDEX_FUR_GROUP
+                if furGroup == undefined then furGroup = DEF.DEFAULT_FUR_GROUP
+                ui_spinnerFurGroup.value = (furGroup as integer)
             )
         )
     )
