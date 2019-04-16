@@ -55,6 +55,11 @@ version:1
             for i in toRemove do deleteItem arr i
         )
 
+        fn refreshNodeTab nt = 
+        (
+            local toDelete = for i = nt.count to 1 by -1 where nt[i] == undefined collect i
+            for index in toDelete do deleteItem nt index
+        )
         fn refreshSourceButtons = (refreshButtonEnables ui_bRemoveSource ui_multiListSource)
         fn refreshSourceList = (refreshListBox ui_multiListSource sourceObjects; refreshSourceButtons())
         fn refreshTargetButtons = (refreshButtonEnables ui_bRemoveTarget ui_multiListTarget)
@@ -74,8 +79,8 @@ version:1
         )
 
 
-        on mainRollout open do (refreshAll())
-        on mainRollout reload do (refreshAll())
+        on mainRollout open do (refreshNodeTab sourceObjects; refreshNodeTab targetObjects; refreshAll())
+        on mainRollout reload do (refreshNodeTab sourceObjects; refreshNodeTab targetObjects; refreshAll())
 
         on ui_pbAddSource picked obj do (appendIfUnique sourceObjects obj; refreshSourceList(); refreshDropDown())
         on ui_bRemoveSource pressed do (removeSelected ui_multiListSource sourceObjects; refreshSourceList(); refreshDropDown())
