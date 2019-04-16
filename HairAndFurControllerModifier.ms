@@ -89,7 +89,7 @@ version:1
         on ui_multiListSource doubleClick do (ui_multiListSource.selection = #{1..sourceObjects.count}; refreshSourceButtons())
 
         on ui_pbAddTarget picked obj do (appendIfUnique targetObjects obj; refreshTargetList())
-        on ui_bRemoveTarget pressed do (removeSelected ui_multiListTarget targetObjects; refreshTargetList())
+        on ui_bRemoveTarget pressed do (removeSelected ui_multiListTarget targetObjects; refreshTargetList(); refreshSelectedTargets())
         on ui_multiListTarget selectionEnd do (refreshTargetButtons() refreshSelectedTargets();)
         on ui_multiListTarget rightClick do (ui_multiListTarget.selection = #(); refreshTargetButtons(); refreshSelectedTargets())
         on ui_multiListTarget doubleClick do (ui_multiListTarget.selection = #{1..targetObjects.count}; refreshTargetButtons(); refreshSelectedTargets())
