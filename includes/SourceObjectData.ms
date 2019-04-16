@@ -7,6 +7,7 @@ struct SourceObjectData
     p2Thickness,
     fHairSegments,
     fHairPasses,
+    fHairRandScale,
     fFlyawayPercentage,
     fFlyawayStrength,
     fMessStrength,

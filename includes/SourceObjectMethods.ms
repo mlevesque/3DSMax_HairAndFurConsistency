@@ -1,17 +1,18 @@
 filein "SourceObjectData.ms"
 filein "SharedMethods.ms"
 
-function __processHairLengthOnSpline splineIndex sourceData guideSplines =
+function __processHairLengthOnSpline splineIndex sourceData guideSplines hairScale =
 (
-    local fullLength = getSplineLength guideSplines splineIndex
-    if sourceData.fMinLength > fullLength then sourceData.fMinLength = fullLength
-    if sourceData.fMaxLength < fullLength then sourceData.fMaxLength = fullLength
+    local len = hairScale * getSplineLength guideSplines splineIndex
+    if sourceData.fMinLength > len then sourceData.fMinLength = len
+    if sourceData.fMaxLength < len then sourceData.fMaxLength = len
 )
 
 function __populateHairLengths sourceData sourceObj sourceHairMod =
 (
     -- create spline shape of the hair guides in order to calculate lengths
     local guideSplines = sourceHairMod.ConvertGuidesToSplines instance:sourceObj
+    local hairScale = sourceHairMod.HairScale / 100.0
     if numSplines guideSplines == 0 then
     (
         sourceData.fMinLength = sourceData.fMaxLength = 0
@@ -22,7 +23,7 @@ function __populateHairLengths sourceData sourceObj sourceHairMod =
         sourceData.fMaxLength = 0
         for splineIndex = 1 to numSplines guideSplines do
         (
-            __processHairLengthOnSpline splineIndex sourceData guideSplines
+            __processHairLengthOnSpline splineIndex sourceData guideSplines hairScale
         )
     )
     -- clean up spline shape
@@ -55,6 +56,7 @@ function buildSourceObjectData sourceObj =
     sourceData.p2Thickness = [sourceHairMod.HairRootThickness,sourceHairMod.HairTipThickness]
     sourceData.fHairSegments = sourceHairMod.HairSegments
     sourceData.fHairPasses = sourceHairMod.HairPasses
+    sourceData.fHairRandScale = sourceHairMod.HairRandScale
     sourceData.fFlyawayPercentage = sourceHairMod.FlyawayPerc
     sourceData.fFlyawayStrength = sourceHairMod.FlyawayStren
     sourceData.fMessStrength = sourceHairMod.MessStren
