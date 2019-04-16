@@ -97,18 +97,21 @@ version:1
         on ui_dropdown selected index do (refreshUpdateButton())
         on ui_bUpdateTargets pressed do
         (
-            -- get source
-            local sourceObject = getDropdownSourceObj()
-            if sourceObject != undefined then
+            undo "Update Hair and Fur Targets" on
             (
-                -- get targets
-                local selectedTargets = getSelectedTargets()
+                -- get source
+                local sourceObject = getDropdownSourceObj()
+                if sourceObject != undefined then
+                (
+                    -- get targets
+                    local selectedTargets = getSelectedTargets()
 
-                -- get source data
-                local sourceData = buildSourceObjectData sourceObject
+                    -- get source data
+                    local sourceData = buildSourceObjectData sourceObject
 
-                -- modify targets
-                for obj in selectedTargets do modifyTargetWithSourceData obj sourceData
+                    -- modify targets
+                    for obj in selectedTargets do modifyTargetWithSourceData obj sourceData
+                )
             )
         )
     )
