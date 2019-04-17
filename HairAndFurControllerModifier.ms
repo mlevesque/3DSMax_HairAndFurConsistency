@@ -31,12 +31,14 @@ version:1
     (
         /* UI */
         multiListBox ui_multiListSource "Source Objects"
-        pickButton ui_pbAddSource "Add" filter:filterHairAndFur width:50 align:#left across:2
-        button ui_bRemoveSource "Remove" enabled:false width:50 align:#right
+        pickButton ui_pbAddSource "Add" filter:filterHairAndFur width:45 align:#left across:3
+        button ui_bSelectSource "Select" enabled:false width:45 align:#center
+        button ui_bRemoveSource "Remove" enabled:false width:45 align:#right
         label ui_lblBlank1 ""
         multiListBox ui_multiListTarget "Target Objects"
-        pickButton ui_pbAddTarget "Add" filter:filterHairAndFur width:50 align:#left across:2
-        button ui_bRemoveTarget "Remove" enabled:false width:50 align:#right
+        pickButton ui_pbAddTarget "Add" filter:filterHairAndFur width:45 align:#left across:3
+        button ui_bSelectTarget "Select" enabled:false width:45 align:#center
+        button ui_bRemoveTarget "Remove" enabled:false width:45 align:#right
         label ui_lblBlank2 ""
         dropdownlist ui_dropdown "Select Source"
         checkbox ui_chkHairLengths "Hair Length" checked:enableHairLength
@@ -48,8 +50,8 @@ version:1
 
         /* Methods */
         fn getDropdownSourceObj = (local index = ui_dropdown.selection; if index > 0 then sourceObjects[index] else undefined)
-        fn getSelectedTargetIndexes = (local s = ui_multiListTarget.selection; for i = 1 to s.count where s[i] == true collect i)
-        fn getTargetsByIndexes indexArray = (for i in indexArray collect targetObjects[i])
+        fn getSelectedIndexes lb = (local s = lb.selection; for i = 1 to s.count where s[i] == true collect i)
+        fn getObjectsByIndexes indexArray nt = (for i in indexArray collect nt[i])
 
         fn refreshListBox lb arr = (lb.items = for obj in arr collect obj.name)
         fn refreshButtonEnables b lb = (b.enabled = not lb.selection.isEmpty)
@@ -77,6 +79,7 @@ version:1
                 )
             )
         )
+        fn selectObjectsFromListSelection lb nt = (select (getObjectsByIndexes (getSelectedIndexes lb) nt))
 
         fn refreshNodeTab nt isTarget = 
         (
@@ -94,9 +97,9 @@ version:1
                 )
             )
         )
-        fn refreshSourceButtons = (refreshButtonEnables ui_bRemoveSource ui_multiListSource)
+        fn refreshSourceButtons = (refreshButtonEnables ui_bRemoveSource ui_multiListSource; refreshButtonEnables ui_bSelectSource ui_multiListSource)
         fn refreshSourceList = (refreshListBox ui_multiListSource sourceObjects; refreshSourceButtons())
-        fn refreshTargetButtons = (refreshButtonEnables ui_bRemoveTarget ui_multiListTarget)
+        fn refreshTargetButtons = (refreshButtonEnables ui_bRemoveTarget ui_multiListTarget; refreshButtonEnables ui_bSelectTarget ui_multiListTarget)
         fn refreshTargetList = (refreshListBox ui_multiListTarget targetObjects; refreshTargetButtons())
         fn refreshDropDown = (refreshListBox ui_dropdown sourceObjects)
         fn refreshUpdateButton = (ui_bUpdateTargets.enabled = ui_dropdown.selection != 0 AND ui_lbSelectedTargets.items.count > 0)
@@ -108,7 +111,7 @@ version:1
             ui_multiListTarget.selection = ba
 
             -- populate selected targets list box
-            local selectedTargets = getTargetsByIndexes selectedTargetIndexes
+            local selectedTargets = getObjectsByIndexes selectedTargetIndexes targetObjects
             ui_lbSelectedTargets.items = for obj in selectedTargets collect obj.name
             refreshUpdateButton()
         )
@@ -124,25 +127,27 @@ version:1
         on mainRollout reload do (refreshNodeTab sourceObjects false; refreshNodeTab targetObjects true; refreshAll())
 
         on ui_pbAddSource picked obj do (addObject obj sourceObjects targetObjects true; refreshSourceList(); refreshDropDown(); refreshTargetList())
+        on ui_bSelectSource pressed do (selectObjectsFromListSelection ui_multiListSource sourceObjects)
         on ui_bRemoveSource pressed do (removeSelected ui_multiListSource sourceObjects; refreshSourceList(); refreshDropDown())
         on ui_multiListSource selectionEnd do (refreshSourceButtons())
         on ui_multiListSource rightClick do (ui_multiListSource.selection = #(); refreshSourceButtons())
         on ui_multiListSource doubleClick do (ui_multiListSource.selection = #{1..sourceObjects.count}; refreshSourceButtons())
 
         on ui_pbAddTarget picked obj do (addObject obj targetObjects sourceObjects false; refreshTargetList(); refreshSourceList(); refreshDropDown())
+        on ui_bSelectTarget pressed do (selectObjectsFromListSelection ui_multiListTarget targetObjects)
         on ui_bRemoveTarget pressed do (removeSelected ui_multiListTarget targetObjects; selectedTargetIndexes = #(); refreshTargetList(); refreshSelectedTargets())
-        on ui_multiListTarget selectionEnd do (refreshTargetButtons(); selectedTargetIndexes = getSelectedTargetIndexes(); refreshSelectedTargets())
+        on ui_multiListTarget selectionEnd do (refreshTargetButtons(); selectedTargetIndexes = getSelectedIndexes ui_multiListTarget; refreshSelectedTargets())
         on ui_multiListTarget rightClick do 
         (
             ui_multiListTarget.selection = #()
-            selectedTargetIndexes = getSelectedTargetIndexes();
+            selectedTargetIndexes = getSelectedIndexes ui_multiListTarget;
             refreshTargetButtons()
             refreshSelectedTargets()
         )
         on ui_multiListTarget doubleClick do 
         (
             ui_multiListTarget.selection = #{1..targetObjects.count}
-            selectedTargetIndexes = getSelectedTargetIndexes();
+            selectedTargetIndexes = getSelectedIndexes ui_multiListTarget;
             refreshTargetButtons()
             refreshSelectedTargets()
         )
@@ -157,7 +162,7 @@ version:1
                 if sourceObject != undefined then
                 (
                     -- get targets
-                    local selectedTargets = getTargetsByIndexes selectedTargetIndexes
+                    local selectedTargets = getObjectsByIndexes selectedTargetIndexes targetObjects
 
                     -- get source data
                     local sourceData = SourceObjectData()
