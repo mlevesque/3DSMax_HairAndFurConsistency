@@ -20,6 +20,7 @@ version:1
         enableHairLength type:#boolean default:true ui:ui_chkHairLengths
         enableHairProps type:#boolean default:true ui:ui_chkHairProps
         enableDynamics type:#boolean default:true ui:ui_chkDynamics
+        selectedSourceIndex type:#integer ui:ui_dropdown
         selectedTargetIndexes type:#intTab tabSizeVariable:true
     )
 
