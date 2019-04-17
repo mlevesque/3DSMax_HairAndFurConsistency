@@ -118,7 +118,7 @@ version:1
         fn refreshAll = 
         (
             refreshSourceList(); refreshTargetList(); refreshSourceButtons()
-            refreshTargetButtons(); refreshDropDown(); refreshSelectedTargets()
+            refreshDropDown(); refreshSelectedTargets(); refreshTargetButtons()
         )
 
 
@@ -131,7 +131,7 @@ version:1
         on ui_bRemoveSource pressed do (removeSelected ui_multiListSource sourceObjects; refreshSourceList(); refreshDropDown())
         on ui_multiListSource selectionEnd do (refreshSourceButtons())
         on ui_multiListSource rightClick do (ui_multiListSource.selection = #(); refreshSourceButtons())
-        on ui_multiListSource doubleClick do (ui_multiListSource.selection = #{1..sourceObjects.count}; refreshSourceButtons())
+        on ui_multiListSource doubleClicked item do (ui_multiListSource.selection = #{1..sourceObjects.count}; refreshSourceButtons())
 
         on ui_pbAddTarget picked obj do (addObject obj targetObjects sourceObjects false; refreshTargetList(); refreshSourceList(); refreshDropDown())
         on ui_bSelectTarget pressed do (selectObjectsFromListSelection ui_multiListTarget targetObjects)
@@ -144,7 +144,7 @@ version:1
             refreshTargetButtons()
             refreshSelectedTargets()
         )
-        on ui_multiListTarget doubleClick do 
+        on ui_multiListTarget doubleClicked item do 
         (
             ui_multiListTarget.selection = #{1..targetObjects.count}
             selectedTargetIndexes = getSelectedIndexes ui_multiListTarget;
