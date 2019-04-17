@@ -20,6 +20,7 @@ version:1
         enableHairLength type:#boolean default:true ui:ui_chkHairLengths
         enableHairProps type:#boolean default:true ui:ui_chkHairProps
         enableDynamics type:#boolean default:true ui:ui_chkDynamics
+        selectedTargetIndexes type:#intTab tabSizeVariable:true
     )
 
     /*=============================================================================================
@@ -46,7 +47,8 @@ version:1
 
         /* Methods */
         fn getDropdownSourceObj = (local index = ui_dropdown.selection; if index > 0 then sourceObjects[index] else undefined)
-        fn getSelectedTargets = (local s = ui_multiListTarget.selection; for i = 1 to s.count where s[i] == true collect targetObjects[i])
+        fn getSelectedTargetIndexes = (local s = ui_multiListTarget.selection; for i = 1 to s.count where s[i] == true collect i)
+        fn getTargetsByIndexes indexArray = (for i in indexArray collect targetObjects[i])
 
         fn refreshListBox lb arr = (lb.items = for obj in arr collect obj.name)
         fn refreshButtonEnables b lb = (b.enabled = not lb.selection.isEmpty)
@@ -56,10 +58,21 @@ version:1
             for i in toRemove do deleteItem arr i
         )
 
-        fn refreshNodeTab nt = 
+        fn refreshNodeTab nt isTarget = 
         (
             local toDelete = for i = nt.count to 1 by -1 where nt[i] == undefined collect i
             for index in toDelete do deleteItem nt index
+
+            -- if we are dealing with the target object list, then we need to also
+            --  remove indexes in selected targets that match those that we are removing
+            if isTarget == true then
+            (
+                for index in toDelete do
+                (
+                    local pos = findItem selectedTargetIndexes index
+                    if pos > 0 then deleteItem selectedTargetIndexes pos
+                )
+            )
         )
         fn refreshSourceButtons = (refreshButtonEnables ui_bRemoveSource ui_multiListSource)
         fn refreshSourceList = (refreshListBox ui_multiListSource sourceObjects; refreshSourceButtons())
@@ -69,7 +82,13 @@ version:1
         fn refreshUpdateButton = (ui_bUpdateTargets.enabled = ui_dropdown.selection != 0 AND ui_lbSelectedTargets.items.count > 0)
         fn refreshSelectedTargets = 
         (
-            local selectedTargets = getSelectedTargets()
+            -- make selections in Target list box
+            local ba = #{}
+            for index in selectedTargetIndexes do ba[index] = true
+            ui_multiListTarget.selection = ba
+
+            -- populate selected targets list box
+            local selectedTargets = getTargetsByIndexes selectedTargetIndexes
             ui_lbSelectedTargets.items = for obj in selectedTargets collect obj.name
             refreshUpdateButton()
         )
@@ -81,8 +100,8 @@ version:1
 
 
         /* Events */
-        on mainRollout open do (refreshNodeTab sourceObjects; refreshNodeTab targetObjects; refreshAll())
-        on mainRollout reload do (refreshNodeTab sourceObjects; refreshNodeTab targetObjects; refreshAll())
+        on mainRollout open do (refreshNodeTab sourceObjects false; refreshNodeTab targetObjects true; refreshAll())
+        on mainRollout reload do (refreshNodeTab sourceObjects false; refreshNodeTab targetObjects true; refreshAll())
 
         on ui_pbAddSource picked obj do (appendIfUnique sourceObjects obj; refreshSourceList(); refreshDropDown())
         on ui_bRemoveSource pressed do (removeSelected ui_multiListSource sourceObjects; refreshSourceList(); refreshDropDown())
@@ -92,7 +111,7 @@ version:1
 
         on ui_pbAddTarget picked obj do (appendIfUnique targetObjects obj; refreshTargetList())
         on ui_bRemoveTarget pressed do (removeSelected ui_multiListTarget targetObjects; refreshTargetList(); refreshSelectedTargets())
-        on ui_multiListTarget selectionEnd do (refreshTargetButtons() refreshSelectedTargets();)
+        on ui_multiListTarget selectionEnd do (refreshTargetButtons(); selectedTargetIndexes = getSelectedTargetIndexes(); refreshSelectedTargets())
         on ui_multiListTarget rightClick do (ui_multiListTarget.selection = #(); refreshTargetButtons(); refreshSelectedTargets())
         on ui_multiListTarget doubleClick do (ui_multiListTarget.selection = #{1..targetObjects.count}; refreshTargetButtons(); refreshSelectedTargets())
 
@@ -106,7 +125,7 @@ version:1
                 if sourceObject != undefined then
                 (
                     -- get targets
-                    local selectedTargets = getSelectedTargets()
+                    local selectedTargets = getTargetsByIndexes getSelectedTargetIndexes()
 
                     -- get source data
                     local sourceData = SourceObjectData()
