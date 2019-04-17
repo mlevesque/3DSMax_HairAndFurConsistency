@@ -1,5 +1,4 @@
-filein "includes/SourceObjectMethods.ms"
-filein "includes/TargetObjectMethods.ms"
+filein "includes/SourceObjectData.ms"
 
 plugin modifier hairAndFurControllerModifier
 name:"Hair and Fur Controller"
@@ -8,7 +7,8 @@ replaceUI:off
 silentErrors:off
 version:1
 (
-    local APPDATA_INDEX_FUR_GROUP = 2
+    /* Filters */
+    fn filterHairAndFur obj = (for m in obj.modifiers where classof m == HairMod collect m).count > 0
 
     /*=============================================================================================
                     PARAMETERS
@@ -24,9 +24,7 @@ version:1
     */
     rollout mainRollout "Source Objects"
     (
-        fn filterHairAndFur obj = (for m in obj.modifiers where classof m == HairMod collect m).count > 0
-
-
+        /* UI */
         multiListBox ui_multiListSource "Source Objects"
         pickButton ui_pbAddSource "Add" filter:filterHairAndFur width:50 align:#left across:2
         button ui_bRemoveSource "Remove" enabled:false width:50 align:#right
@@ -44,6 +42,7 @@ version:1
         listbox ui_lbSelectedTargets "Selected Targets" readOnly:true
 
 
+        /* Methods */
         fn getDropdownSourceObj = (local index = ui_dropdown.selection; if index > 0 then sourceObjects[index] else undefined)
         fn getSelectedTargets = (local s = ui_multiListTarget.selection; for i = 1 to s.count where s[i] == true collect targetObjects[i])
 
@@ -79,6 +78,7 @@ version:1
         )
 
 
+        /* Events */
         on mainRollout open do (refreshNodeTab sourceObjects; refreshNodeTab targetObjects; refreshAll())
         on mainRollout reload do (refreshNodeTab sourceObjects; refreshNodeTab targetObjects; refreshAll())
 
@@ -107,12 +107,37 @@ version:1
                     local selectedTargets = getSelectedTargets()
 
                     -- get source data
-                    local sourceData = buildSourceObjectData sourceObject
+                    local sourceData = SourceObjectData()
+                    sourceData.initialize sourceObject
+                    sourceData.calculateHairLengths()
+                    sourceData.calculateObjectMeasurements()
 
                     -- modify targets
-                    for obj in selectedTargets do modifyTargetWithSourceData obj sourceData
+                    for obj in selectedTargets do (sourceData.modifyTargetObject obj true true true)
                 )
             )
+        )
+    )
+
+    rollout analyzerRollout "Analyze Object"
+    (
+        pickButton ui_pbObject "Pick Object" filter:filterHairAndFur autoDisplay:true width:100 align:#center
+        edittext ui_etDescription "" readOnly:true height:80
+
+        on ui_pbObject picked obj do
+        (
+            local d = SourceObjectData()
+            d.initialize obj
+            d.calculateHairLengths()
+            d.calculateObjectMeasurements()
+
+            local ssDesc = StringStream ""
+            local minl = d.getMinHairLength()
+            local maxl = d.getMaxHairLength()
+            local hc = d.getHairCountPerArea()
+            local avg = d.getAverageDimension()
+            format "MinLength: %\nMaxLength: %\nHairCnt/Area: %\nAvgDimension: %" minl maxl hc avg to:ssDesc
+            ui_etDescription.text = (ssDesc as string)
         )
     )
 )
