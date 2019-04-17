@@ -58,6 +58,25 @@ version:1
             local toRemove = for i = lb.selection.count to 1 by -1 where lb.selection[i] == true collect i
             for i in toRemove do deleteItem arr i
         )
+        fn addObject objectToAdd objectList otherObjectList affectTargetIndexes =
+        (
+            -- add to object list as long as it hasn't already been added
+            appendIfUnique objectList objectToAdd
+
+            -- remove it from other list if it is there
+            local index = findItem otherObjectList objectToAdd
+            if index > 0 then 
+            (
+                deleteItem otherObjectList index
+
+                -- if removal may affect target indexes, then be sure to remove that index
+                if affectTargetIndexes == true then
+                (
+                    local pos = findItem selectedTargetIndexes index
+                    if pos > 0 then deleteItem selectedTargetIndexes index
+                )
+            )
+        )
 
         fn refreshNodeTab nt isTarget = 
         (
@@ -104,17 +123,29 @@ version:1
         on mainRollout open do (refreshNodeTab sourceObjects false; refreshNodeTab targetObjects true; refreshAll())
         on mainRollout reload do (refreshNodeTab sourceObjects false; refreshNodeTab targetObjects true; refreshAll())
 
-        on ui_pbAddSource picked obj do (appendIfUnique sourceObjects obj; refreshSourceList(); refreshDropDown())
+        on ui_pbAddSource picked obj do (addObject obj sourceObjects targetObjects true; refreshSourceList(); refreshDropDown(); refreshTargetList())
         on ui_bRemoveSource pressed do (removeSelected ui_multiListSource sourceObjects; refreshSourceList(); refreshDropDown())
         on ui_multiListSource selectionEnd do (refreshSourceButtons())
         on ui_multiListSource rightClick do (ui_multiListSource.selection = #(); refreshSourceButtons())
         on ui_multiListSource doubleClick do (ui_multiListSource.selection = #{1..sourceObjects.count}; refreshSourceButtons())
 
-        on ui_pbAddTarget picked obj do (appendIfUnique targetObjects obj; refreshTargetList())
-        on ui_bRemoveTarget pressed do (removeSelected ui_multiListTarget targetObjects; refreshTargetList(); refreshSelectedTargets())
+        on ui_pbAddTarget picked obj do (addObject obj targetObjects sourceObjects false; refreshTargetList(); refreshSourceList(); refreshDropDown())
+        on ui_bRemoveTarget pressed do (removeSelected ui_multiListTarget targetObjects; selectedTargetIndexes = #(); refreshTargetList(); refreshSelectedTargets())
         on ui_multiListTarget selectionEnd do (refreshTargetButtons(); selectedTargetIndexes = getSelectedTargetIndexes(); refreshSelectedTargets())
-        on ui_multiListTarget rightClick do (ui_multiListTarget.selection = #(); refreshTargetButtons(); refreshSelectedTargets())
-        on ui_multiListTarget doubleClick do (ui_multiListTarget.selection = #{1..targetObjects.count}; refreshTargetButtons(); refreshSelectedTargets())
+        on ui_multiListTarget rightClick do 
+        (
+            ui_multiListTarget.selection = #()
+            selectedTargetIndexes = getSelectedTargetIndexes();
+            refreshTargetButtons()
+            refreshSelectedTargets()
+        )
+        on ui_multiListTarget doubleClick do 
+        (
+            ui_multiListTarget.selection = #{1..targetObjects.count}
+            selectedTargetIndexes = getSelectedTargetIndexes();
+            refreshTargetButtons()
+            refreshSelectedTargets()
+        )
 
         on ui_dropdown selected index do (refreshUpdateButton())
         on ui_bUpdateTargets pressed do
@@ -126,7 +157,7 @@ version:1
                 if sourceObject != undefined then
                 (
                     -- get targets
-                    local selectedTargets = getTargetsByIndexes getSelectedTargetIndexes()
+                    local selectedTargets = getTargetsByIndexes selectedTargetIndexes
 
                     -- get source data
                     local sourceData = SourceObjectData()
