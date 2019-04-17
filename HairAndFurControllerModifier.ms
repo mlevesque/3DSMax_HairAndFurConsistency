@@ -27,7 +27,7 @@ version:1
     /*=============================================================================================
                     ROLLOUT
     */
-    rollout mainRollout "Source Objects"
+    rollout mainRollout "Hair and Fur Controller"
     (
         /* UI */
         multiListBox ui_multiListSource "Source Objects"
