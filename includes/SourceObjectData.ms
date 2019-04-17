@@ -45,14 +45,17 @@ struct SourceObjectData
         p2Result
     ),
 
+    fn __getFaceAreas op obj = (for i = 1 to op.getNumFaces obj collect op.getFaceArea obj i),
+
     fn __calculateSurfaceArea obj hMod =
     (
         -- The hair and fur modifier needs to be disabled in order for the classof check to work
         hMod.enabled = false
         case (classof obj) of
         (
-            Editable_Poly: (faceAreas = for i = 1 to polyop.getNumFaces obj collect polyop.getFaceArea obj i)
-            Editable_Mesh: (faceAreas = for i = 1 to meshop.getNumFaces obj collect meshop.getFaceArea obj i)
+            Editable_Poly: (faceAreas = __getFaceAreas polyop obj)
+            PolyMeshObject: (faceAreas = __getFaceAreas polyop obj)
+            Editable_Mesh: (faceAreas = __getFaceAreas meshop obj)
             default: (faceAreas = #(1))
         )
         hMod.enabled = true
