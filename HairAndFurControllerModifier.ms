@@ -13,10 +13,13 @@ version:1
     /*=============================================================================================
                     PARAMETERS
     */
-    parameters main
+    parameters main rollout:mainRollout
     (
         sourceObjects type:#nodeTab tabSizeVariable:true
         targetObjects type:#nodeTab tabSizeVariable:true
+        enableHairLength type:#boolean default:true ui:ui_chkHairLengths
+        enableHairProps type:#boolean default:true ui:ui_chkHairProps
+        enableDynamics type:#boolean default:true ui:ui_chkDynamics
     )
 
     /*=============================================================================================
@@ -28,16 +31,15 @@ version:1
         multiListBox ui_multiListSource "Source Objects"
         pickButton ui_pbAddSource "Add" filter:filterHairAndFur width:50 align:#left across:2
         button ui_bRemoveSource "Remove" enabled:false width:50 align:#right
-
         label ui_lblBlank1 ""
-
         multiListBox ui_multiListTarget "Target Objects"
         pickButton ui_pbAddTarget "Add" filter:filterHairAndFur width:50 align:#left across:2
         button ui_bRemoveTarget "Remove" enabled:false width:50 align:#right
-
         label ui_lblBlank2 ""
-
         dropdownlist ui_dropdown "Select Source"
+        checkbox ui_chkHairLengths "Hair Length" checked:enableHairLength
+        checkbox ui_chkHairProps "Hair Props" checked:enableHairProps
+        checkbox ui_chkDynamics "Dynamics" checked:enableDynamics
         button ui_bUpdateTargets "Update Targets" enabled:false
         listbox ui_lbSelectedTargets "Selected Targets" readOnly:true
 
@@ -113,7 +115,7 @@ version:1
                     sourceData.calculateObjectMeasurements()
 
                     -- modify targets
-                    for obj in selectedTargets do (sourceData.modifyTargetObject obj true true true)
+                    for obj in selectedTargets do (sourceData.modifyTargetObject obj enableHairLength enableHairProps enableDynamics)
                 )
             )
         )
